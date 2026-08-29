@@ -2,22 +2,21 @@ import os
 import joblib
 import pandas as pd
 import streamlit as st
-import matplotlib.pyplot as plt
 
 
 # ============================================================
-# PAGE CONFIGURATION
+# SAYFA AYARLARI
 # ============================================================
 
 st.set_page_config(
-    page_title="Steam Game Intelligence",
+    page_title="Steam Oyun Analizi",
     page_icon="🎮",
     layout="wide"
 )
 
 
 # ============================================================
-# PATHS
+# DOSYA YOLLARI
 # ============================================================
 
 BASE_DIR = os.path.dirname(
@@ -46,7 +45,7 @@ GAME_ANALYSIS_PATH = os.path.join(
 
 
 # ============================================================
-# LOAD MODEL
+# MODELİ YÜKLE
 # ============================================================
 
 @st.cache_resource
@@ -59,7 +58,7 @@ def load_model():
 
 
 # ============================================================
-# LOAD GAME DATA
+# OYUN VERİLERİNİ YÜKLE
 # ============================================================
 
 @st.cache_data
@@ -67,7 +66,6 @@ def load_game_data():
 
     data = pd.read_csv(GAME_ANALYSIS_PATH)
 
-    # Eğer index CSV'ye kaydedildiyse
     if "Unnamed: 0" in data.columns:
         data = data.drop(columns=["Unnamed: 0"])
 
@@ -79,68 +77,83 @@ game_analysis = load_game_data()
 
 
 # ============================================================
-# SIDEBAR
+# YAN MENÜ
 # ============================================================
 
-st.sidebar.title("🎮 Steam Game Intelligence")
+st.sidebar.title("🎮 Steam Oyun Analizi")
 
 st.sidebar.markdown(
     """
-    ### Navigation
+    ### Menü
 
-    Use the menu below to explore the project.
+    Steam oyun incelemelerini analiz etmek,
+    oyunların genel memnuniyet düzeylerini
+    karşılaştırmak ve yapay zekâ modelinin
+    performansını incelemek için menüden
+    bir bölüm seçebilirsin.
     """
 )
 
 page = st.sidebar.radio(
-    "Go to:",
+    "Bölüm seç:",
     [
-        "🏠 Dashboard",
-        "💬 Review Analyzer",
-        "🎮 Game Analysis",
-        "📊 Model Performance",
-        "🔍 Error Analysis"
+        "🏠 Ana Sayfa",
+        "💬 Yorum Analizi",
+        "🎮 Oyun Analizi",
+        "📊 Model Performansı",
+        "🔍 Hata Analizi"
     ]
 )
 
 
 # ============================================================
-# DASHBOARD
+# ANA SAYFA
 # ============================================================
 
-if page == "🏠 Dashboard":
+if page == "🏠 Ana Sayfa":
 
-    st.title("🎮 Steam Game Intelligence")
+    st.title("🎮 Steam Oyun Analizi")
 
     st.markdown(
         """
-        ### Machine Learning-Based Steam Review Analysis
+        ## Yapay Zekâ Destekli Steam Yorum Analizi
 
-        This application analyzes Steam game reviews using
-        **TF-IDF + Logistic Regression**.
+        Bu uygulama, Steam oyun yorumlarını makine öğrenmesi
+        kullanarak analiz eder.
 
-        The model was trained to classify Steam reviews as
-        positive or negative and generate a sentiment score.
+        Model, yorumların **olumlu veya olumsuz** olduğunu
+        tahmin eder ve her yorum için bir **olumlu duygu skoru**
+        oluşturur.
+
+        Kullanılan temel yöntemler:
+
+        - **TF-IDF:** Yorumları sayısal özelliklere dönüştürür.
+        - **Lojistik Regresyon:** Yorumun olumlu veya olumsuz
+          olduğunu tahmin eder.
+        - **Oyun bazlı analiz:** Yorum sonuçları oyun seviyesinde
+          karşılaştırılır.
         """
     )
 
     st.divider()
 
     # --------------------------------------------------------
-    # PROJECT METRICS
+    # MODEL SONUÇLARI
     # --------------------------------------------------------
+
+    st.subheader("📈 Model Sonuçları")
 
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
         st.metric(
             "Model",
-            "Logistic Regression"
+            "Lojistik Regresyon"
         )
 
     with col2:
         st.metric(
-            "Accuracy",
+            "Doğruluk",
             "92.22%"
         )
 
@@ -152,94 +165,119 @@ if page == "🏠 Dashboard":
 
     with col4:
         st.metric(
-            "Final Threshold",
+            "Seçilen Eşik",
             "0.20"
         )
 
     st.divider()
 
     # --------------------------------------------------------
-    # GAME STATISTICS
+    # VERİ SETİ İSTATİSTİKLERİ
     # --------------------------------------------------------
+
+    st.subheader("🎮 Veri Seti Özeti")
 
     col1, col2, col3 = st.columns(3)
 
     with col1:
         st.metric(
-            "Analyzed Games",
+            "Analiz Edilen Oyun",
             f"{len(game_analysis):,}"
         )
 
     with col2:
         st.metric(
-            "Reviews per Game",
-            "≥ 100"
+            "Oyun Başına Minimum Yorum",
+            "100"
         )
 
     with col3:
         st.metric(
-            "Game-Level Correlation",
+            "Oyun Bazlı Korelasyon",
             "0.9824"
         )
 
     st.divider()
 
-    st.subheader("📌 Project Overview")
+    # --------------------------------------------------------
+    # PROJE AKIŞI
+    # --------------------------------------------------------
+
+    st.subheader("🔄 Proje Akışı")
 
     st.markdown(
         """
-        **Pipeline**
+        **Steam Yorumları**
 
-        `Steam Reviews`
         ↓
-        `Data Cleaning`
-        ↓
-        `TF-IDF`
-        ↓
-        `Logistic Regression`
-        ↓
-        `Sentiment Score`
-        ↓
-        `Game-Level Analysis`
 
-        ### Key Findings
+        **Veri Temizleme**
 
-        - Logistic Regression slightly outperformed Linear SVM.
-        - The final classification threshold was optimized to **0.20**.
-        - Accuracy reached **92.22%**.
-        - ROC-AUC reached **0.9593**.
-        - Game-level AI sentiment showed a correlation of **0.9824**
-          with the actual positive review rate.
+        ↓
+
+        **TF-IDF ile Metin Dönüştürme**
+
+        ↓
+
+        **Lojistik Regresyon**
+
+        ↓
+
+        **Duygu Skoru**
+
+        ↓
+
+        **Oyun Bazlı Analiz**
+        """
+    )
+
+    st.divider()
+
+    st.subheader("💡 Temel Bulgular")
+
+    st.markdown(
+        """
+        - Lojistik Regresyon, test edilen modeller arasında
+          en iyi sonucu verdi.
+        - Optimize edilen sınıflandırma eşiği **0.20** olarak
+          belirlendi.
+        - Modelin doğruluk oranı **%92.22** seviyesine ulaştı.
+        - ROC-AUC değeri **0.9593** olarak ölçüldü.
+        - Oyun bazında yapay zekâ duygu skoru ile gerçek
+          olumlu yorum oranı arasında **0.9824** korelasyon
+          bulundu.
         """
     )
 
 
 # ============================================================
-# REVIEW ANALYZER
+# YORUM ANALİZİ
 # ============================================================
 
-elif page == "💬 Review Analyzer":
+elif page == "💬 Yorum Analizi":
 
-    st.title("💬 Steam Review Analyzer")
+    st.title("💬 Steam Yorum Analizi")
 
     st.markdown(
         """
-        Enter a Steam review and let the machine learning model
-        estimate its sentiment.
+        Aşağıdaki kutuya bir Steam oyun yorumu yaz.
+
+        Yapay zekâ modeli yorumun olumlu veya olumsuz olduğunu
+        tahmin edecek ve olumlu duygu skorunu hesaplayacaktır.
         """
     )
 
     review = st.text_area(
-        "Enter your review:",
+        "Steam yorumunu buraya yaz:",
         height=180,
         placeholder=(
-            "Example: This game is absolutely amazing "
-            "and I highly recommend it!"
+            "Örnek: Bu oyun gerçekten harika! "
+            "Grafikleri çok güzel ve oynaması çok eğlenceli."
         )
     )
 
     analyze = st.button(
-        "🤖 Analyze Review",
+        "🤖 Yorumu Analiz Et",
         use_container_width=True
     )
 
@@ -248,13 +286,13 @@ elif page == "💬 Review Analyzer":
         if not review.strip():
 
             st.warning(
-                "Please enter a review first."
+                "⚠️ Lütfen önce bir yorum yaz."
             )
 
         else:
 
             # ------------------------------------------------
-            # TF-IDF TRANSFORMATION
+            # TF-IDF DÖNÜŞÜMÜ
             # ------------------------------------------------
 
             review_tfidf = tfidf.transform(
@@ -262,7 +300,7 @@ elif page == "💬 Review Analyzer":
             )
 
             # ------------------------------------------------
-            # PROBABILITY
+            # OLASILIK
             # ------------------------------------------------
 
             probability = model.predict_proba(
@@ -270,7 +308,7 @@ elif page == "💬 Review Analyzer":
             )[0][1]
 
             # ------------------------------------------------
-            # FINAL THRESHOLD
+            # SEÇİLEN EŞİK
             # ------------------------------------------------
 
             threshold = 0.20
@@ -279,26 +317,26 @@ elif page == "💬 Review Analyzer":
                 probability >= threshold
             )
 
-            # ------------------------------------------------
-            # RESULT
-            # ------------------------------------------------
-
             st.divider()
+
+            # ------------------------------------------------
+            # TAHMİN SONUCU
+            # ------------------------------------------------
 
             if prediction:
 
                 st.success(
-                    "🟢 Positive Review"
+                    "🟢 Olumlu Yorum"
                 )
 
             else:
 
                 st.error(
-                    "🔴 Negative Review"
+                    "🔴 Olumsuz Yorum"
                 )
 
             # ------------------------------------------------
-            # METRICS
+            # SONUÇLAR
             # ------------------------------------------------
 
             col1, col2, col3 = st.columns(3)
@@ -306,14 +344,14 @@ elif page == "💬 Review Analyzer":
             with col1:
 
                 st.metric(
-                    "AI Sentiment Score",
+                    "Olumlu Duygu Skoru",
                     f"{probability:.2%}"
                 )
 
             with col2:
 
                 st.metric(
-                    "Threshold",
+                    "Kullanılan Eşik",
                     f"{threshold:.2f}"
                 )
 
@@ -321,27 +359,29 @@ elif page == "💬 Review Analyzer":
 
                 if probability >= 0.80:
 
-                    confidence = "High"
+                    confidence = "Yüksek"
 
                 elif probability >= 0.50:
 
-                    confidence = "Medium"
+                    confidence = "Orta"
 
                 else:
 
-                    confidence = "Low"
+                    confidence = "Düşük"
 
                 st.metric(
-                    "Confidence",
+                    "Model Güveni",
                     confidence
                 )
 
+            st.divider()
+
             # ------------------------------------------------
-            # PROBABILITY BAR
+            # DUYGU SKORU
             # ------------------------------------------------
 
             st.subheader(
-                "Sentiment Probability"
+                "📊 Olumlu Duygu Skoru"
             )
 
             st.progress(
@@ -349,44 +389,79 @@ elif page == "💬 Review Analyzer":
             )
 
             st.caption(
-                "The score represents the model's estimated "
-                "probability of a positive review."
+                "Bu değer, modelin yorumun olumlu olma "
+                "olasılığına ilişkin tahminini gösterir."
             )
 
+            st.divider()
+
             # ------------------------------------------------
-            # REVIEW
+            # YORUM
             # ------------------------------------------------
 
             st.subheader(
-                "Analyzed Review"
+                "📝 Analiz Edilen Yorum"
             )
 
             st.info(review)
 
+            st.divider()
+
+            # ------------------------------------------------
+            # KISA AÇIKLAMA
+            # ------------------------------------------------
+
+            if probability >= 0.80:
+
+                st.success(
+                    "Model bu yorumu güçlü şekilde olumlu "
+                    "olarak değerlendiriyor."
+                )
+
+            elif probability >= 0.50:
+
+                st.info(
+                    "Model yorumda genel olarak olumlu "
+                    "bir duygu olduğunu düşünüyor."
+                )
+
+            elif probability >= 0.20:
+
+                st.warning(
+                    "Model yorumu düşük seviyede olumlu "
+                    "olarak değerlendiriyor."
+                )
+
+            else:
+
+                st.error(
+                    "Model yorumda olumlu duygu yerine "
+                    "olumsuz duygu bulunduğunu düşünüyor."
+                )
+
 
 # ============================================================
-# GAME ANALYSIS
+# OYUN ANALİZİ
 # ============================================================
 
-elif page == "🎮 Game Analysis":
+elif page == "🎮 Oyun Analizi":
 
-    st.title("🎮 Game-Level Analysis")
+    st.title("🎮 Oyun Bazlı Analiz")
 
     st.markdown(
         """
-        Compare the actual Steam positive review rate
-        with the AI-generated sentiment score.
+        Bir oyun seçerek Steam kullanıcılarının gerçek olumlu
+        yorum oranını yapay zekânın oluşturduğu duygu skoru ile
+        karşılaştırabilirsin.
         """
     )
 
-    # --------------------------------------------------------
-    # GAME SELECTOR
-    # --------------------------------------------------------
-
     selected_game = st.selectbox(
-        "Select a game:",
+        "🎯 Bir oyun seç:",
         sorted(
-            game_analysis["name"].dropna().unique()
+            game_analysis["name"]
+            .dropna()
+            .unique()
         )
     )
 
@@ -397,63 +472,65 @@ elif page == "🎮 Game Analysis":
     st.divider()
 
     # --------------------------------------------------------
-    # GAME METRICS
+    # OYUN BİLGİLERİ
     # --------------------------------------------------------
+
+    st.subheader(
+        f"🎮 {selected_game}"
+    )
 
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
 
         st.metric(
-            "Review Count",
+            "Yorum Sayısı",
             f"{int(game['review_count']):,}"
         )
 
     with col2:
 
         st.metric(
-            "Actual Positive Rate",
+            "Gerçek Olumlu Yorum Oranı",
             f"{game['actual_positive_rate']:.2%}"
         )
 
     with col3:
 
         st.metric(
-            "AI Sentiment Score",
+            "Yapay Zekâ Duygu Skoru",
             f"{game['ai_sentiment_score']:.2%}"
         )
 
     with col4:
 
-        difference = (
-            game["score_difference"]
-        )
+        difference = game["score_difference"]
 
         st.metric(
-            "AI - Actual",
+            "Fark",
             f"{difference:+.2%}"
         )
 
     st.divider()
 
     # --------------------------------------------------------
-    # COMPARISON CHART
+    # KARŞILAŞTIRMA
     # --------------------------------------------------------
 
     st.subheader(
-        "Actual Positive Rate vs AI Sentiment"
+        "📊 Gerçek Oran ve Yapay Zekâ Skoru Karşılaştırması"
     )
 
     chart_data = pd.DataFrame(
         {
-            "Score": [
+            "Skor": [
                 game["actual_positive_rate"],
                 game["ai_sentiment_score"]
             ]
         },
         index=[
-            "Actual Positive Rate",
-            "AI Sentiment Score"
+            "Gerçek Olumlu Yorum Oranı",
+            "Yapay Zekâ Duygu Skoru"
         ]
     )
 
@@ -461,56 +538,67 @@ elif page == "🎮 Game Analysis":
         chart_data
     )
 
+    st.divider()
+
     # --------------------------------------------------------
-    # INTERPRETATION
+    # YORUM
     # --------------------------------------------------------
+
+    st.subheader(
+        "💡 Sonuç"
+    )
 
     if abs(difference) < 0.05:
 
         st.success(
-            "The AI sentiment score is very close "
-            "to the actual positive review rate."
+            "✅ Yapay zekâ skoru ile gerçek olumlu yorum "
+            "oranı birbirine oldukça yakın."
         )
 
     elif difference > 0:
 
         st.info(
-            "The AI model estimates a more positive sentiment "
-            "than the actual Steam recommendation rate."
+            "ℹ️ Yapay zekâ, kullanıcıların gerçek olumlu "
+            "yorum oranından daha yüksek bir olumlu duygu "
+            "seviyesi tahmin ediyor."
         )
 
     else:
 
         st.warning(
-            "The AI model estimates a less positive sentiment "
-            "than the actual Steam recommendation rate."
+            "⚠️ Yapay zekâ, kullanıcıların gerçek olumlu "
+            "yorum oranından daha düşük bir olumlu duygu "
+            "seviyesi tahmin ediyor."
         )
 
 
 # ============================================================
-# MODEL PERFORMANCE
+# MODEL PERFORMANSI
 # ============================================================
 
-elif page == "📊 Model Performance":
+elif page == "📊 Model Performansı":
 
-    st.title("📊 Model Performance")
+    st.title("📊 Model Performansı")
 
     st.markdown(
         """
-        Two machine learning models were evaluated:
+        Projede iki farklı makine öğrenmesi modeli test edildi:
 
-        - Logistic Regression
-        - Linear Support Vector Machine
+        - **Lojistik Regresyon**
+        - **Doğrusal SVM**
+
+        Her iki model de TF-IDF ile oluşturulan metin özellikleri
+        kullanılarak eğitildi.
         """
     )
 
     results = pd.DataFrame(
         {
             "Model": [
-                "Logistic Regression",
-                "Linear SVM"
+                "Lojistik Regresyon",
+                "Doğrusal SVM"
             ],
-            "Accuracy": [
+            "Doğruluk": [
                 0.922211,
                 0.8987
             ],
@@ -530,17 +618,19 @@ elif page == "📊 Model Performance":
     st.divider()
 
     # --------------------------------------------------------
-    # FINAL MODEL
+    # SEÇİLEN MODEL
     # --------------------------------------------------------
 
     st.subheader(
-        "🏆 Selected Model"
+        "🏆 Seçilen Model"
     )
 
     st.success(
         """
-        Logistic Regression was selected as the final model
-        because it achieved the best overall performance.
+        Lojistik Regresyon final model olarak seçildi.
+
+        Bunun temel nedeni test edilen modeller arasında
+        daha yüksek doğruluk ve ROC-AUC değerlerine ulaşmasıdır.
         """
     )
 
@@ -549,41 +639,45 @@ elif page == "📊 Model Performance":
     with col1:
 
         st.metric(
-            "Accuracy",
+            "Doğruluk",
             "92.22%"
         )
 
     with col2:
 
         st.metric(
-            "Precision",
+            "Kesinlik",
             "93.74%"
         )
 
     with col3:
 
         st.metric(
-            "Recall",
+            "Duyarlılık",
             "96.96%"
         )
 
     with col4:
 
         st.metric(
-            "F1 Score",
+            "F1 Skoru",
             "95.32%"
         )
 
     st.divider()
 
+    # --------------------------------------------------------
+    # MODEL KARŞILAŞTIRMA
+    # --------------------------------------------------------
+
     st.subheader(
-        "Model Comparison"
+        "📈 Model Karşılaştırması"
     )
 
     chart_data = results.set_index(
         "Model"
     )[
-        ["Accuracy", "ROC-AUC"]
+        ["Doğruluk", "ROC-AUC"]
     ]
 
     st.bar_chart(
@@ -592,13 +686,17 @@ elif page == "📊 Model Performance":
 
     st.divider()
 
+    # --------------------------------------------------------
+    # EŞİK OPTİMİZASYONU
+    # --------------------------------------------------------
+
     st.subheader(
-        "🎯 Threshold Optimization"
+        "🎯 Eşik Değeri Optimizasyonu"
     )
 
     threshold_results = pd.DataFrame(
         {
-            "Threshold": [
+            "Eşik": [
                 0.10,
                 0.15,
                 0.20,
@@ -609,7 +707,7 @@ elif page == "📊 Model Performance":
                 0.45,
                 0.50
             ],
-            "Accuracy": [
+            "Doğruluk": [
                 0.911149,
                 0.918743,
                 0.922211,
@@ -642,29 +740,32 @@ elif page == "📊 Model Performance":
 
     st.info(
         """
-        The selected threshold is **0.20** because it provides
-        a strong balance between Precision, Recall and F1 Score.
+        🎯 Final eşik değeri **0.20** olarak seçildi.
+
+        Bu değer, modelin olumlu yorumları yakalama oranını
+        yüksek tutarken genel performans açısından güçlü
+        bir denge sağlamaktadır.
         """
     )
 
 
 # ============================================================
-# ERROR ANALYSIS
+# HATA ANALİZİ
 # ============================================================
 
-elif page == "🔍 Error Analysis":
+elif page == "🔍 Hata Analizi":
 
-    st.title("🔍 Error Analysis")
+    st.title("🔍 Model Hata Analizi")
 
     st.markdown(
         """
-        The model's incorrect predictions were analyzed
-        to understand its limitations.
+        Modelin yanlış yaptığı tahminleri inceleyerek hangi
+        durumlarda zorlandığını analiz ediyoruz.
         """
     )
 
     # --------------------------------------------------------
-    # ERROR METRICS
+    # HATA ORANLARI
     # --------------------------------------------------------
 
     col1, col2, col3 = st.columns(3)
@@ -672,42 +773,46 @@ elif page == "🔍 Error Analysis":
     with col1:
 
         st.metric(
-            "Correct",
+            "✅ Doğru Tahmin",
             "90.59%"
         )
 
     with col2:
 
         st.metric(
-            "False Negative",
+            "❌ Yanlış Negatif",
             "7.69%"
         )
 
     with col3:
 
         st.metric(
-            "False Positive",
+            "❌ Yanlış Pozitif",
             "1.72%"
         )
 
     st.divider()
 
+    # --------------------------------------------------------
+    # HATA DAĞILIMI
+    # --------------------------------------------------------
+
     st.subheader(
-        "Prediction Error Distribution"
+        "📊 Tahmin Hatalarının Dağılımı"
     )
 
     error_data = pd.DataFrame(
         {
-            "Percentage": [
+            "Yüzde": [
                 90.59,
                 7.69,
                 1.72
             ]
         },
         index=[
-            "Correct",
-            "False Negative",
-            "False Positive"
+            "Doğru Tahmin",
+            "Yanlış Negatif",
+            "Yanlış Pozitif"
         ]
     )
 
@@ -717,73 +822,96 @@ elif page == "🔍 Error Analysis":
 
     st.divider()
 
+    # --------------------------------------------------------
+    # MODELİN ZORLANDIĞI DURUMLAR
+    # --------------------------------------------------------
+
     st.subheader(
-        "⚠️ Common Sources of Errors"
+        "⚠️ Modelin Zorlandığı Durumlar"
     )
 
     st.markdown(
         """
-        The model can struggle with:
+        Model özellikle aşağıdaki durumlarda hata yapabilir:
 
-        - Sarcasm and irony
-        - Mixed sentiment
-        - Contradictory statements
-        - Numerical ratings such as `1/10` and `10/10`
-        - Game-specific terminology
-        - Technical complaints
-        - Updates and patches
-        - Reviews where text sentiment and Steam recommendation differ
+        - 😏 İroni ve alay
+        - 🔀 Karışık duygu içeren yorumlar
+        - ⚖️ Birbirine zıt ifadeler
+        - 🔢 `1/10` ve `10/10` gibi sayısal puanlamalar
+        - 🎮 Oyuna özel terimler
+        - 🛠️ Teknik problemler
+        - 🔄 Güncellemeler ve yamalar
+        - 💬 Yorumun yazılı duygu ifadesi ile Steam
+          öneri etiketinin birbirinden farklı olması
         """
     )
 
     st.divider()
 
+    # --------------------------------------------------------
+    # OYUN BAZLI HATA
+    # --------------------------------------------------------
+
     st.subheader(
-        "📈 Game-Level Prediction Error"
+        "📈 Oyun Bazında En Büyük Farklar"
     )
 
     error_games = game_analysis.copy()
 
-    error_games["absolute_error"] = (
+    error_games["mutlak_hata"] = (
         error_games["score_difference"].abs()
     )
 
     error_games = error_games.sort_values(
-        "absolute_error",
+        "mutlak_hata",
         ascending=False
     ).head(15)
 
+    display_data = error_games[
+        [
+            "name",
+            "review_count",
+            "actual_positive_rate",
+            "ai_sentiment_score",
+            "score_difference",
+            "mutlak_hata"
+        ]
+    ].copy()
+
+    display_data.columns = [
+        "Oyun",
+        "Yorum Sayısı",
+        "Gerçek Olumlu Oran",
+        "Yapay Zekâ Skoru",
+        "Fark",
+        "Mutlak Hata"
+    ]
+
     st.dataframe(
-        error_games[
-            [
-                "name",
-                "review_count",
-                "actual_positive_rate",
-                "ai_sentiment_score",
-                "score_difference",
-                "absolute_error"
-            ]
-        ],
+        display_data,
         use_container_width=True,
         hide_index=True
     )
 
     st.caption(
         """
-        These games show the largest difference between
-        the actual positive review rate and the average
-        AI sentiment score.
+        Bu tablo, gerçek olumlu yorum oranı ile yapay zekânın
+        ortalama duygu skoru arasındaki farkın en yüksek olduğu
+        oyunları göstermektedir.
         """
     )
 
 
 # ============================================================
-# FOOTER
+# ALT BİLGİ
 # ============================================================
 
 st.sidebar.divider()
 
 st.sidebar.caption(
-    "Steam Game Intelligence | "
-    "TF-IDF + Logistic Regression"
+    "🎮 Steam Oyun Analizi"
+)
+
+st.sidebar.caption(
+    "TF-IDF + Lojistik Regresyon"
 )
