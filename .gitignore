@@ -10,7 +10,5 @@ data/*.zip
 
 models/*.pkl
 models/*.joblib
-model/*.pkl
-model/*.joblib
 
 *.exe
