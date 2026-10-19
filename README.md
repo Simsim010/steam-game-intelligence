@@ -6,7 +6,7 @@ A machine learning project that analyzes Steam game reviews using sentiment anal
 
 Try the application here:
 
-👉 https://steam-game-intelligence.streamlit.app/
+ https://steam-game-intelligence.streamlit.app/
 
 ##  About the Project
 
@@ -38,7 +38,7 @@ The application allows users to:
 - Logistic Regression
 - Streamlit
 
-## ▶ Run Locally
+##  Run Locally
 
 ```bash
 pip install -r requirements.txt
